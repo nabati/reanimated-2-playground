@@ -1,44 +1,49 @@
 import Animated, {
   useSharedValue,
-  withTiming,
-  useAnimatedStyle,
-  Easing,
+  useAnimatedProps,
 } from 'react-native-reanimated';
-import {View, Button} from 'react-native';
+import {Button} from 'react-native';
 import React from 'react';
+
+import {Svg, Circle} from 'react-native-svg';
+import {SafeAreaView, View} from 'react-native';
+
+const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
 export default function AnimatedStyleUpdateExample(props) {
   const randomWidth = useSharedValue(10);
 
-  const config = {
-    duration: 500,
-    easing: Easing.bezier(0.5, 0.01, 0, 1),
-  };
-
-  const style = useAnimatedStyle(() => {
+  const animatedProps = useAnimatedProps(() => {
     return {
-      width: withTiming(randomWidth.value, config),
+      transform: [1, 0, 0, 1, randomWidth.value * 100, 0],
     };
   });
 
   return (
-    <View
-      style={{
-        flex: 1,
-        flexDirection: 'column',
-      }}>
-      <Animated.View
-        style={[
-          {width: 100, height: 80, backgroundColor: 'black', margin: 30},
-          style,
-        ]}
-      />
-      <Button
-        title="toggle"
-        onPress={() => {
-          randomWidth.value = Math.random() * 350;
-        }}
-      />
-    </View>
+    <SafeAreaView style={{flex: 1}}>
+      <View>
+        <Button
+          title="toggle"
+          onPress={() => {
+            randomWidth.value = Math.random() * 25;
+          }}
+          style={{backgroundColor: 'red'}}
+        />
+        <Svg
+          viewBow="0 0 200 200"
+          style={{borderColor: 'red', borderWidth: 2}}
+          width={200}
+          height={200}>
+          <AnimatedCircle
+            animatedProps={animatedProps}
+            transform={[1, 0, 0, 1, -100, 0]}
+            r={50}
+            cx={100}
+            cy={100}
+            fill="black"
+          />
+        </Svg>
+      </View>
+    </SafeAreaView>
   );
 }

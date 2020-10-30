@@ -1,44 +1,34 @@
+import React from 'react';
 import Animated, {
   useSharedValue,
-  withTiming,
-  useAnimatedStyle,
-  Easing,
+  useAnimatedProps,
 } from 'react-native-reanimated';
-import {View, Button} from 'react-native';
-import React from 'react';
+import Svg, {Path} from 'react-native-svg';
 
-export default function AnimatedStyleUpdateExample(props) {
-  const randomWidth = useSharedValue(10);
+const AnimatedPath = Animated.createAnimatedComponent(Path);
 
-  const config = {
-    duration: 500,
-    easing: Easing.bezier(0.5, 0.01, 0, 1),
-  };
+function App() {
+  const radius = useSharedValue(50);
 
-  const style = useAnimatedStyle(() => {
+  const animatedProps = useAnimatedProps(() => {
+    // draw a circle
+    const path = `
+    M 100, 100
+    m -${radius}, 0
+    a ${radius},${radius} 0 1,0 ${radius * 2},0
+    a ${radius},${radius} 0 1,0 ${-radius * 2},0
+    `;
     return {
-      width: withTiming(randomWidth.value, config),
+      d: path,
     };
   });
 
+  // attach animated props to an SVG path using animatedProps
   return (
-    <View
-      style={{
-        flex: 1,
-        flexDirection: 'column',
-      }}>
-      <Animated.View
-        style={[
-          {width: 100, height: 80, backgroundColor: 'black', margin: 30},
-          style,
-        ]}
-      />
-      <Button
-        title="toggle"
-        onPress={() => {
-          randomWidth.value = Math.random() * 350;
-        }}
-      />
-    </View>
+    <Svg>
+      <AnimatedPath animatedProps={animatedProps} fill="black" />
+    </Svg>
   );
 }
+
+export default App;
